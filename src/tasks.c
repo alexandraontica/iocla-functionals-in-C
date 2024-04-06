@@ -62,8 +62,6 @@ void get_names(void *name_void, void *stud_void) {
 	char *name_str = *name;
 
 	sprintf(name_str, "%s", stud->name);
-
-	name_void = &name;
 }
 
 void student_destructor(void *elem)
