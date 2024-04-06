@@ -5,9 +5,27 @@
 #include <string.h>
 #include <stdio.h>
 
+void add_first(void *acc_void, void *elem_void) {
+	array_t *acc = (array_t *)acc_void;
+
+	void *aux = calloc(acc->len - 1, acc->elem_size);
+	memcpy(aux, acc->data, acc->elem_size * (acc->len - 1));
+	memcpy(acc->data, elem_void, acc->elem_size);
+	memcpy((int *)acc->data + 1, aux, acc->elem_size * (acc->len - 1));
+
+	free(aux);
+}
+
 array_t reverse(array_t list) {
-	(void)list;
-	return (array_t){0};
+	array_t rev;
+	rev.data = calloc(list.len, list.elem_size);
+	rev.destructor = list.destructor;
+	rev.elem_size = list.elem_size;
+	rev.len = list.len;
+
+	reduce(add_first, &rev, list);
+
+	return rev;
 }
 
 void get_number(void *new_nr, void **parts) {
@@ -19,7 +37,7 @@ void get_number(void *new_nr, void **parts) {
 	int fr = *(int *)parts[1];
 	number->fractional_part = fr;
 
-	number->string = malloc(20);
+	number->string = malloc(20);  // presupun ca nu am numere cu mai mult de 20 cifre
 	sprintf(number->string, "%d.%d", integ, fr);
 }
 
@@ -58,7 +76,7 @@ void get_names(void *name_void, void *stud_void) {
 	student_t *stud = (student_t *)stud_void;
 	char **name = (char **)name_void;
 
-	*name = malloc(20);
+	*name = malloc(20);  // presupun ca nu am nume cu mai mult de 20 de caractere
 	char *name_str = *name;
 
 	sprintf(name_str, "%s", stud->name);
@@ -79,7 +97,6 @@ array_t get_passing_students_names(array_t list) {
 						passing_students);
 
 	return names;
-	return passing_students;
 }
 
 array_t check_bigger_sum(array_t list_list, array_t int_list) {
