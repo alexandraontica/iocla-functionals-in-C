@@ -154,9 +154,20 @@ void add_even(void *new_void, void **arg) {
 	int index = *(int *)arg[1];
 
 	if (index % 2 == 0)
-		*new = strdup(str);
+		//printf("%s ", *(char **)str);
+
+		*new = strdup(*(char **)str);
 	else
 		*new = NULL;
+}
+
+boolean check(void *elem_void) {
+	char **elem = (char **)elem_void;
+
+	if (*elem)
+		return 1;
+	else
+		return 0;
 }
 
 array_t get_even_indexed_strings(array_t list) {
@@ -168,14 +179,12 @@ array_t get_even_indexed_strings(array_t list) {
 
 	int acc = -1;
 	reduce(create_int_list, &acc, int_list);
-printf("%d ", 1);
+
 	array_t new_list = map_multiple(add_even, list.elem_size, list.destructor,
 									2, list, int_list);
 
-	return new_list;
-
-	//(void)list;
-	return list;
+	array_t final_list = filter(check, new_list);
+	return final_list;
 }
 
 array_t generate_square_matrix(int n) {
