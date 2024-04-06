@@ -8,7 +8,7 @@
 void add_first(void *acc_void, void *elem_void) {
 	array_t *acc = (array_t *)acc_void;
 
-	// adaug elementul curent la inceputul liste
+	// adaug elementul curent la inceputul listei
 	// deja existente in acumulator
 	void *aux = calloc(acc->len - 1, acc->elem_size);
 	memcpy(aux, acc->data, acc->elem_size * (acc->len - 1));
@@ -141,18 +141,49 @@ array_t check_bigger_sum(array_t list_list, array_t int_list) {
 	return bool_list;
 }
 
-array_t get_even_indexed_strings(array_t list) {
-	list.elem_size *= 2;  // iau cate 2 elemente odata
-	list.len++;  // modific lungimea listei pentru noile elemente
-	list.len /= 2;
-	// Avand string-uri, acestea se termina in '\0'.
-	// Cand "lipesc" doua zone de memorie apartinand
-	// a doua string-uri, tot ce va fi dupa primul
-	// \0 va fi ignorat, deci sirurile de pe pozitii
-	// impare nu mai sunt luate in considerare.
-
-	return list;
+void create_int_list(void *acc_void, void *elem_void) {
+	int *elem = (int *)elem_void;
+	int *acc = (int *)acc_void;
+(void)acc_void;
+	*acc++;
+	*elem = 1;
 }
+
+void init0(void *elem_void) {
+	*(int *)elem_void = 0;
+}
+
+array_t get_even_indexed_strings(array_t list) {
+	// list.elem_size *= 2;  // iau cate 2 elemente odata
+	// // Avand string-uri, acestea se termina in '\0'.
+	// // Cand "lipesc" doua zone de memorie apartinand
+	// // a doua string-uri, tot ce va fi dupa primul
+	// // \0 va fi ignorat, deci sirurile de pe pozitii
+	// // impare nu mai sunt luate in considerare.
+
+	// list.len++;  // modific lungimea listei pentru noile elemente
+	// list.len /= 2;
+
+	// return list;
+
+	array_t int_list;
+	int_list.data = malloc(list.len * sizeof(int));
+	int_list.destructor = NULL;
+	int_list.elem_size = sizeof(int);
+	int_list.len = list.len;
+	for_each(init0, int_list);
+
+	int acc = -1;
+	reduce(create_int_list, &acc, int_list);
+
+	//map_multiple
+
+	return int_list;
+
+	(void)list;
+	return (array_t){0};
+}
+
 
 array_t generate_square_matrix(int n) {
 	(void)n;
