@@ -141,66 +141,17 @@ array_t check_bigger_sum(array_t list_list, array_t int_list) {
 	return bool_list;
 }
 
-// void get_str_length(void *len_void, void *str_void) {
-// 	char *str = (char *)str_void;
-// 	int *len = (int *)len_void;
-
-// 	if ((int)strlen(str) > *len)
-// 		*len = strlen(str);
-// }
-
-void create_int_list(void *elem_void) {
-	int *elem = (int *)elem_void;
-
-	if (*elem != 0) {
-		int *prev = elem - 1;
-		*elem = *prev + 1;
-	}
-}
-
-// void set_odd(void *new_void, void *old_void) {
-// 	char **old = (char **)old_void;
-// 	char **new = (char **)new_void;
-
-// 	*old = malloc(20);  // presupun ca nu am nume cu mai mult de
-// 							// 20 de caractere
-// 	*new = malloc(20);  // presupun ca nu am nume cu mai mult de
-// 							// 20 de caractere
-	
-// 	char *old_str = *old;
-// 	char *new_str = *new;
-
-// 	char *prev_old = ((char *)old_void) - 1;
-// 	if (prev_old[0] != '\0')
-// 		old_str[0] = '\0';
-// 	else
-// 		strcpy(new_str, old_str);
-// }
-
 array_t get_even_indexed_strings(array_t list) {
-	// creez o lista de indecsi (0, 1, 2, ...)
-	array_t int_list;
-	int_list.data = calloc(list.len, sizeof(int));
-	int_list.destructor = NULL;
-	int_list.elem_size = sizeof(int);
-	int_list.len = list.len;
-	*((int *)int_list.data) = 0;
+	list.elem_size *= 2;  // iau cate 2 elemente odata
+	list.len++;  // modific lungimea listei pentru noile elemente
+	list.len /= 2;
+	// Avand string-uri, acestea se termina in '\0'.
+	// Cand "lipesc" doua zone de memorie apartinand
+	// a doua string-uri, tot ce va fi dupa primul
+	// \0 va fi ignorat, deci sirurile de pe pozitii
+	// impare nu mai sunt luate in considerare.
 
-	for_each(create_int_list, int_list);
-
-	// // calculez lungimea maxima a unui string
-	// // deoarece imi trebuie ca argument pentru map
-	// // dimensiunea (size) unui element
-	// int len = 0;
-	// reduce(get_str_length, &len, list);
-
-	// char *prev_old = ((char *)list.data) - 1;
-	// prev_old[0] = '\0';
-	// array_t even_str = map(set_odd, len + 1, free, list);
-	
-	(void)list;
-	return int_list;
-	return (array_t){0};
+	return list;
 }
 
 array_t generate_square_matrix(int n) {
