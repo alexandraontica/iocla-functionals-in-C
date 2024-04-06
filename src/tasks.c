@@ -99,10 +99,31 @@ array_t get_passing_students_names(array_t list) {
 	return names;
 }
 
+void sum(void *acc_void, void *elem_void) {
+	int *acc = (int *)acc_void;
+	int *elem = (int *)elem_void;
+
+	*acc += *elem;
+}
+
+void check_greater(void *new_void, void **elem_lists) {
+	boolean *new = (boolean *)new_void;
+	array_t list = *(array_t *)elem_lists[0];
+	int integ = *(int *)elem_lists[1];
+
+	int sum_list = 0;
+	reduce(sum, &sum_list, list);
+
+	if (sum_list >= integ)
+		*new = 1;
+	else
+		*new = 0;
+}
+
 array_t check_bigger_sum(array_t list_list, array_t int_list) {
-	(void)list_list;
-	(void)int_list;
-	return (array_t){0};
+	array_t bool_list = map_multiple(check_greater, sizeof(boolean),
+									 NULL, 2, list_list, int_list);
+	return bool_list;
 }
 
 array_t get_even_indexed_strings(array_t list) {
