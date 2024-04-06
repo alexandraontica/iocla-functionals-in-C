@@ -144,44 +144,50 @@ array_t check_bigger_sum(array_t list_list, array_t int_list) {
 void create_int_list(void *acc_void, void *elem_void) {
 	int *elem = (int *)elem_void;
 	int *acc = (int *)acc_void;
-(void)acc_void;
-	*acc++;
-	*elem = 1;
+	int x = ++(*acc);
+	*elem = x;
 }
 
 void init0(void *elem_void) {
 	*(int *)elem_void = 0;
 }
 
+void add_even(void *new_void, void **arg) {
+	char **new = (char **)new_void;
+	char *str = (char *)arg[0];
+	int index = *(int *)arg[1];
+
+	*new = malloc(20);
+	char *new_str = *new;
+
+	if (index % 2 == 0)
+		sprintf(new_str, "%s", str);
+	else
+		new_str = NULL;
+}
+
 array_t get_even_indexed_strings(array_t list) {
-	// list.elem_size *= 2;  // iau cate 2 elemente odata
-	// // Avand string-uri, acestea se termina in '\0'.
-	// // Cand "lipesc" doua zone de memorie apartinand
-	// // a doua string-uri, tot ce va fi dupa primul
-	// // \0 va fi ignorat, deci sirurile de pe pozitii
-	// // impare nu mai sunt luate in considerare.
-
-	// list.len++;  // modific lungimea listei pentru noile elemente
-	// list.len /= 2;
-
-	// return list;
-
 	array_t int_list;
 	int_list.data = malloc(list.len * sizeof(int));
 	int_list.destructor = NULL;
 	int_list.elem_size = sizeof(int);
 	int_list.len = list.len;
-	for_each(init0, int_list);
+	//for_each(init0, int_list);
 
 	int acc = -1;
 	reduce(create_int_list, &acc, int_list);
 
-	//map_multiple
+	array_t new_list = map_multiple(add_even, list.elem_size, list.destructor, 2, list, int_list);
+	for (int i = 0; i < list.len; i++) {
+		//if (i % 2 == 0) {
+			printf("%s ", (char *)list.data + i * list.elem_size);
+		//}
+	}
 
-	return int_list;
+	return new_list;
 
 	(void)list;
-	return (array_t){0};
+	return list;
 }
 
 
