@@ -148,22 +148,15 @@ void create_int_list(void *acc_void, void *elem_void) {
 	*elem = x;
 }
 
-void init0(void *elem_void) {
-	*(int *)elem_void = 0;
-}
-
 void add_even(void *new_void, void **arg) {
 	char **new = (char **)new_void;
 	char *str = (char *)arg[0];
 	int index = *(int *)arg[1];
 
-	*new = malloc(20);
-	char *new_str = *new;
-
 	if (index % 2 == 0)
-		sprintf(new_str, "%s", str);
+		*new = strdup(str);
 	else
-		new_str = NULL;
+		*new = NULL;
 }
 
 array_t get_even_indexed_strings(array_t list) {
@@ -172,24 +165,18 @@ array_t get_even_indexed_strings(array_t list) {
 	int_list.destructor = NULL;
 	int_list.elem_size = sizeof(int);
 	int_list.len = list.len;
-	//for_each(init0, int_list);
 
 	int acc = -1;
 	reduce(create_int_list, &acc, int_list);
-
-	array_t new_list = map_multiple(add_even, list.elem_size, list.destructor, 2, list, int_list);
-	for (int i = 0; i < list.len; i++) {
-		//if (i % 2 == 0) {
-			printf("%s ", (char *)list.data + i * list.elem_size);
-		//}
-	}
+printf("%d ", 1);
+	array_t new_list = map_multiple(add_even, list.elem_size, list.destructor,
+									2, list, int_list);
 
 	return new_list;
 
-	(void)list;
+	//(void)list;
 	return list;
 }
-
 
 array_t generate_square_matrix(int n) {
 	(void)n;
