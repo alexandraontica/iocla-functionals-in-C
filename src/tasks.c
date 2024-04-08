@@ -188,21 +188,26 @@ array_t get_even_indexed_strings(array_t list) {
 
 void alloc_elem(void *n_void, void *elem_void) {
 	int *n = (int *)n_void;
-	array_t *elem = (array_t *)elem_void;
-	elem->data = calloc(*n, sizeof(int));
-	elem->destructor = NULL;
-	elem->elem_size = sizeof(int);
-	elem->len = *n;
+	
+	array_t int_list;
+	int_list.data = malloc(*n * sizeof(int));
+	int_list.destructor = NULL;
+	int_list.elem_size = sizeof(int);
+	int_list.len = *n;
+
+	int acc = 0;
+	reduce(create_int_list, &acc, int_list);
+
+	*(array_t *)elem_void = int_list;
 }
 
 array_t generate_square_matrix(int n) {
 	array_t list_list;
-	list_list.data = malloc(n * sizeof(array_t));
+	list_list.data = calloc(n, sizeof(array_t));
 	list_list.destructor = NULL;
 	list_list.elem_size = sizeof(array_t);
 	list_list.len = n;
-	
-	// initializare matrice:
+
 	int acc = n;
 	reduce(alloc_elem, &acc, list_list);
 
