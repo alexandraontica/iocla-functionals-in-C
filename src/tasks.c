@@ -142,6 +142,7 @@ array_t check_bigger_sum(array_t list_list, array_t int_list) {
 }
 
 void create_int_list(void *acc_void, void *elem_void) {
+	// o voi folosi in reduce ca sa creez o lista de int-uri consecutive
 	int *elem = (int *)elem_void;
 	int *acc = (int *)acc_void;
 	int x = ++(*acc);
@@ -154,14 +155,12 @@ void add_even(void *new_void, void **arg) {
 	int index = *(int *)arg[1];
 
 	if (index % 2 == 0)
-		//printf("%s ", *(char **)str);
-
 		*new = strdup(*(char **)str);
 	else
 		*new = NULL;
 }
 
-boolean check(void *elem_void) {
+boolean check_str(void *elem_void) {
 	char **elem = (char **)elem_void;
 
 	if (*elem)
@@ -183,11 +182,29 @@ array_t get_even_indexed_strings(array_t list) {
 	array_t new_list = map_multiple(add_even, list.elem_size, list.destructor,
 									2, list, int_list);
 
-	array_t final_list = filter(check, new_list);
+	array_t final_list = filter(check_str, new_list);
 	return final_list;
 }
 
+void alloc_elem(void *n_void, void *elem_void) {
+	int *n = (int *)n_void;
+	array_t *elem = (array_t *)elem_void;
+	elem->data = calloc(*n, sizeof(int));
+	elem->destructor = NULL;
+	elem->elem_size = sizeof(int);
+	elem->len = *n;
+}
+
 array_t generate_square_matrix(int n) {
-	(void)n;
-	return (array_t){0};
+	array_t list_list;
+	list_list.data = malloc(n * sizeof(array_t));
+	list_list.destructor = NULL;
+	list_list.elem_size = sizeof(array_t);
+	list_list.len = n;
+	
+	// initializare matrice:
+	int acc = n;
+	reduce(alloc_elem, &acc, list_list);
+
+	return list_list;
 }
