@@ -201,6 +201,23 @@ void alloc_elem(void *n_void, void *elem_void) {
 	*(array_t *)elem_void = int_list;
 }
 
+void add(void *acc_void, void *integ_void) {
+	int *acc = (int *)acc_void;
+	int *ineg = (int *)integ_void;
+
+	*ineg = *ineg + *acc;
+}
+
+void change_matrix_elem(void *new_void, void **arg) {
+	array_t *matrix_elem = (array_t *)new_void;
+	array_t *array = (array_t *)arg[0];
+	int to_add = *(int *)arg[1];
+
+	reduce(add, &to_add, *array);
+
+	*matrix_elem = *array;
+}
+
 array_t generate_square_matrix(int n) {
 	array_t list_list;
 	list_list.data = calloc(n, sizeof(array_t));
@@ -211,5 +228,16 @@ array_t generate_square_matrix(int n) {
 	int acc = n;
 	reduce(alloc_elem, &acc, list_list);
 
-	return list_list;
+	array_t int_list;
+	int_list.data = malloc(n * sizeof(int));
+	int_list.destructor = NULL;
+	int_list.elem_size = sizeof(int);
+	int_list.len = n;
+
+	acc = -1;
+	reduce(create_int_list, &acc, int_list);
+
+	array_t new_list = map_multiple(change_matrix_elem, sizeof(array_t), NULL, 2, list_list, int_list);
+
+	return new_list;
 }
