@@ -218,10 +218,6 @@ void atrib(void **arg) {
 void change_matrix_elem(void *new_void, void **arg) {
 	array_t *matrix_elem = (array_t *)new_void;
 	array_t *array = (array_t *)arg[0];
-	// array_t *array = (*(array_t **)arg);
-
-	//printf("%d\n", *(int *)((*(array_t **)arg)->data));
-
 	int to_add = *(int *)arg[1];
 
 	reduce(add, &to_add, *array);
@@ -231,7 +227,7 @@ void change_matrix_elem(void *new_void, void **arg) {
 	int_list.destructor = NULL;
 	int_list.elem_size = sizeof(int);
 	int_list.len = array->len;
-	for_each_multiple(atrib, 2, int_list, array);
+	for_each_multiple(atrib, 2, int_list, *array);
 
 	*matrix_elem = int_list;
 }
@@ -261,7 +257,8 @@ array_t generate_square_matrix(int n) {
 	reduce(create_int_list, &acc, int_list);
 
 	array_t new_list = map_multiple(change_matrix_elem, sizeof(array_t),
-									simple_list_destructor, 2, list_list, int_list);
+									simple_list_destructor, 2, list_list,
+									int_list);
 
 	return new_list;
 }
